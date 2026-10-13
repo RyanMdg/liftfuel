@@ -65,6 +65,7 @@ Principle: **accurate tracking first, useful analytics second, advanced features
 - Collects goal, weight unit, time zone (pre-detected), optional body weight, and calorie and macro targets.
 - Saves the profile, first goal and optional weigh-in atomically (`complete_onboarding`).
 - Shows macro-derived calories and warns when they differ from the target by more than 5%.
+- **Target calculator** (also in Settings > Nutrition targets): sex, age, height and activity level, plus body weight, give a BMR (Mifflin-St Jeor) and maintenance estimate (TDEE). The goal adjusts it (lose −20%, maintain 0, gain +10%, never below BMR), and macros are derived so they add up to the calories (protein 2.0, 1.6 or 1.8 g/kg by goal, capped at 35% of calories; fat 25%; carbohydrates the rest). The calculator fills the fields and the user can still edit them. Formula, not AI. The inputs are saved to the profile for recalculation.
 
 ### Food diary
 - Totals and remaining amounts update after every add, edit, copy or delete.

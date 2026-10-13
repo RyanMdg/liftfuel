@@ -117,8 +117,10 @@ The app is a static single-page application. Any static host works (Vercel, Netl
 
 1. Build command `npm run build`, output directory `dist`.
 2. Set `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (and optionally `VITE_APP_NAME`) in the host's environment.
-3. Configure a SPA fallback so every path serves `index.html`. On Vercel, add a `vercel.json` with `{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }`. On Netlify, add `/* /index.html 200` to `public/_redirects`.
+3. Configure a SPA fallback so every path serves `index.html`. Vercel: the committed `vercel.json` does this (and sets cache headers for `sw.js` and hashed assets). On Netlify, add `/* /index.html 200` to `public/_redirects`.
+   `VITE_` variables are read **at build time**, so after adding or changing them in the host's settings, redeploy.
 4. Add the production URL to Supabase Auth's Site URL and Redirect URLs.
+5. Installable app: serve over **HTTPS** (browsers only install from secure origins; `localhost` counts, a LAN IP such as `http://192.168.x.x` does not). Serve `/sw.js` without long-lived caching so updates reach users. On phones, the browser tab shows install steps until the app is opened from the home screen. Set `VITE_INSTALL_GATE=off` to turn that off.
 
 ## Documentation
 

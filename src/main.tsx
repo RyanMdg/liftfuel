@@ -6,8 +6,11 @@ import { APP_NAME, isSupabaseConfigured } from '@/app/config'
 import { Providers } from '@/app/providers'
 import { router } from '@/app/router'
 import { SetupRequired } from '@/app/SetupRequired'
+import { captureInstallPrompt, registerServiceWorker } from '@/lib/pwa'
 
 document.title = APP_NAME
+captureInstallPrompt()
+registerServiceWorker()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -116,6 +116,14 @@ Authoritative numbers come from the database: entry nutrients come from a trigge
 - Long-range analytics use `fetchAllPages`, so PostgREST row caps never truncate results. All-time records are aggregated in SQL (`exercise_records`).
 - Search is debounced (200ms) and keeps previous results while typing.
 
+## Installable app (PWA)
+
+- `public/manifest.webmanifest` (name, `start_url` `/dashboard`, `display: standalone`, 192 and 512 px icons plus a maskable icon) and Apple meta tags in `index.html`. Icons are in `public/icons/`, rendered from the favicon geometry.
+- `public/sw.js` is hand-written (about 60 lines, no dependency). It handles **same-origin GET only**: pages are network-first with the cached shell as the offline fallback, and hashed `/assets/*` files are cache-first (at most 150 kept). Supabase requests are another origin and are never intercepted, so no private data is cached. It is registered only in production builds (`registerServiceWorker` in `src/lib/pwa.ts`). Bump `VERSION` in `sw.js` to drop old caches.
+- **Phone install gate** (`src/app/InstallGate.tsx`, the root layout route). On a phone (coarse pointer, short screen side under 600 px) in a browser tab, the app shows install steps instead of the route: a real **Install** button when Chromium fires `beforeinstallprompt` (captured at startup), browser-menu steps otherwise, Share > Add to Home Screen on iOS, and "open in your browser" in social-app browsers. The installed app (`display-mode: standalone` or iOS `navigator.standalone`), tablets and desktops pass through. `/reset-password` is exempt because recovery links open in the browser. `VITE_INSTALL_GATE=off` disables the gate (the Playwright config sets it).
+- **iOS storage is separate** between Safari and a home-screen app (WebKit bug 181849, by design). A session started in one is not visible in the other, so users sign in inside the installed app. A password-reset link requested from the installed iOS app opens in Safari, where the PKCE verifier is missing. The install screen therefore links to `/reset-password`, so the whole reset happens in Safari.
+- A browser cannot force installation. The gate is a product rule, not a security control.
+
 ## Deployment strategy
 
 A static SPA (see README): build with `npm run build`, serve `dist/` with an SPA fallback, set the `VITE_` env vars, and apply migrations with `supabase db push`. Schema changes go out as new migration files, applied before deploying the frontend that depends on them.
@@ -131,4 +139,5 @@ A static SPA (see README): build with `npm run build`, serve `dist/` with an SPA
 | `lucide-react` | Icons |
 | `@fontsource-variable/montserrat` | Self-hosted Montserrat (no third-party font request) |
 | `@electric-sql/pglite` (dev) | Runs real migrations and RLS in tests without Docker |
+| (none for the PWA) | `vite-plugin-pwa` 2.0 was the only release supporting Vite 8 and was 11 days old. The hand-written manifest and service worker are small and fully under our control |
 | TypeScript pinned to `~6.0` | typescript-eslint supports TS below 6.1 |

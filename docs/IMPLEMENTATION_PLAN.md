@@ -30,6 +30,8 @@ The working directory (`~/Documents`) had no LiftFuel code. An unrelated project
 - **Workout tracker refactor (iteration 2):** powerlifting total and competition-lift flags removed. Exercise graphs, records and sets per body area added.
 - **Supabase MCP:** `.mcp.json` registers `pakpvanempwexhmjrobx`. Authentication by the user is pending.
 - **Settings:** profile (name, goal, unit, time zone), targets with effective date and history, password change, sign out.
+- **Installable app (iteration 4):** manifest, icons, hand-written service worker (offline app shell, never caches Supabase data), and a phone install gate with Android install button, Android menu steps, iOS Add to Home Screen steps and an in-app-browser notice. See ARCHITECTURE > Installable app.
+- **Target calculator (iteration 3):** onboarding and Settings estimate BMR and TDEE (Mifflin-St Jeor × activity factor), apply the goal and fill calories and macros that add up. Inputs are stored on `profiles` (migration `20261016000100_energy_profile.sql`). Formula code in `src/lib/energy.ts`, no AI.
 
 ## Verification results (2026-10-14, after iteration 2)
 
@@ -37,7 +39,9 @@ The working directory (`~/Documents`) had no LiftFuel code. An unrelated project
 |---|---|---|
 | TypeScript | `npm run typecheck` | Pass, 0 errors |
 | ESLint | `npm run lint` | Pass, 0 errors, 0 warnings |
-| Unit, component and DB tests | `npm test` | **120 passed** across 11 files |
+| Unit, component and DB tests | `npm test` | **134 passed** across 14 files (iteration 3 re-run) |
+| PWA | `tests/unit/pwa.test.tsx` plus a Chromium check of the production build | 8 unit tests passed (platform detection, gate rules, install screens, install prompt). Chromium: no installability or manifest errors, service worker active and controlling, offline reload shows the app shell, gate shown on Pixel 7 and iPhone 15 emulation, `/reset-password` not gated, iOS standalone flag passes through |
+| Target calculator | `tests/unit/energy.test.ts`, `tests/unit/target-calculator.test.tsx`, `tests/db/profile.test.ts` | 14 passed: published equation values, goal adjustments, BMR floor, protein cap, macros agree with calories across 360 input combinations, form validation, profile column constraints and RLS |
 | of which DB (PGlite) | `npm run test:db` | 59 passed: nutrition 22, RLS 18, training 12, USDA and rate limit 7 |
 | Meal-agent logic | `tests/unit/meal-agent.test.ts` | 13 passed: USDA parsing (real response shapes), tool loop with a scripted fake model, rejection of invented FDC IDs |
 | Production build | `npm run build` | Pass. Initial JS about 137 KB gzip. Charts chunk 111 KB gzip, lazy |
@@ -57,6 +61,7 @@ What the DB tests cover: snapshot stability, reference-amount scaling, servings,
 - Auth: email sign-up enabled, email confirmation on.
 
 ### Not verified
+- **PWA on real phones.** Install on a real Android phone and iPhone has not been tried (it needs an HTTPS deployment). Chromium cannot emulate `display-mode: standalone`, so the Android installed-app pass-through is covered only by unit tests.
 - **The meal assistant end to end.** No signed-in request has reached Mistral or USDA yet, so the real tool-call format, JSON mode together with tools, and the agent endpoint are untested. These were built from Mistral's docs as of 2026-10-14.
 - **App flows against the live project.** PostgREST embedding and filter syntax and GoTrue flows (email confirmation, PKCE password recovery) have not run yet. Run `npm run dev` and sign up, or run the Playwright flows with a test account.
 - Supabase's `supabase_auth_admin` path for the sign-up trigger. PGlite inserts into `auth.users` as superuser.
@@ -64,6 +69,8 @@ What the DB tests cover: snapshot stability, reference-amount scaling, servings,
 - Real-device mobile testing (only Chromium mobile emulation).
 
 ## Known limitations
+
+- iOS home-screen apps and Safari keep separate sign-ins (WebKit design). Password reset requested from the installed iOS app must be redone from Safari (the install screen links to it).
 
 - Food search uses term matching with `position()` and a `lower(name)` index. There is no trigram or fuzzy search yet (PGlite lacks `pg_trgm`, which kept tests portable).
 - Catalog foods are approximate generic values marked as estimates, not imported from FoodData Central.

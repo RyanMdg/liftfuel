@@ -175,3 +175,34 @@ Findings and decisions:
 - **Mistral**: tool calls arrive as `tool_calls[].function.arguments` (a JSON string), and results go back as `role: "tool"` messages with `tool_call_id` (S29). The agents completions endpoint accepts `agent_id`, `messages`, `tools` and `response_format`, but is listed as deprecated (S28). Chat completions is therefore the default, and a Studio agent is optional.
 - **Review before logging** follows the same principle as earlier: nothing changes the diary without an explicit user action, and estimated portions are visually emphasised.
 - **Hevy-style exercise pages** (S30, summary only): per-exercise graphs and records replace the powerlifting total. Graph options are estimated 1RM, heaviest weight, session volume and total reps, and the records are heaviest, best 1RM, best set volume and most reps.
+
+## 10. Iteration 3 research (2026-10-14): target calculator (TDEE)
+
+| # | Title | URL | How read |
+|---|---|---|---|
+| S31 | Mifflin MD, St Jeor ST, et al. A new predictive equation for resting energy expenditure in healthy individuals. Am J Clin Nutr 1990;51(2):241–7 | https://doi.org/10.1093/ajcn/51.2.241 | Search result summary of the abstract (PubMed blocked automated fetch) |
+| S32 | Frankenfield D, Roth-Yousey L, Compher C. Comparison of predictive equations for resting metabolic rate in healthy nonobese and obese adults: a systematic review. J Am Diet Assoc 2005;105(5):775–89 | https://doi.org/10.1016/j.jada.2005.02.005 | Search result summary of the abstract |
+| S33 | Jäger R, et al. ISSN Position Stand: protein and exercise. J Int Soc Sports Nutr 2017;14:20 | https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5477153/ | Search result summary of the position statements |
+| S34 | MacroFactor help: why expenditure differs from a TDEE calculator | https://help.macrofactorapp.com/en/articles/126-why-is-my-expenditure-in-macrofactor-different-from-the-output-of-a-tdee-calculator | Search result only |
+
+Findings and decisions:
+- **Equation**: Mifflin-St Jeor (S31) predicted resting energy within 10% of measured for more people than other equations, with the narrowest error range (S32). S32 also warns about individual error and under-represented age and ethnic groups. So the UI calls the result an estimate and tells users to adjust after 2 to 3 weeks of weight trend.
+- **Activity factors** 1.2 to 1.9 are a widely used convention (often attributed to McArdle et al.'s exercise physiology textbook), not a verified primary study. Bucketing adds error, and people tend to overestimate activity (S34). So the hint says "If unsure, pick the lower level".
+- **Protein**: 1.4 to 2.0 g/kg/day suffices for most exercising people, with more during a deficit (S33). We use 2.0 (lose), 1.6 (maintain) and 1.8 (gain) g/kg, capped at 35% of calories because total body weight overstates needs at high body fat.
+- **Not AI**: the user asked whether AI could do this. The calculation is a fixed formula, so code gives exact, testable, free results. A model would add cost and arithmetic risk, and AGENTS.md excludes generated plans.
+- **Sex input** is labelled for what it does ("The formula has separate equations for male and female bodies"). Birth year is stored instead of a birth date to keep personal data to what the formula needs.
+
+## 11. Iteration 4 research (2026-10-14): installable app on phones
+
+| # | Title | URL | How read |
+|---|---|---|---|
+| S35 | web.dev: What does it take to be installable? | https://web.dev/articles/install-criteria | Search result summary |
+| S36 | WebKit Bugzilla 181849: "Add to homescreen" apps don't share storage with Safari | https://bugs.webkit.org/show_bug.cgi?id=181849 | Search result summary |
+| S37 | firt.dev: iOS PWA Compatibility | https://firt.dev/notes/pwa-ios/ | Search result summary |
+
+Findings and decisions:
+- **Chrome's install prompt** needs HTTPS, a manifest with a name, `start_url`, `display` and 192 and 512 px icons, and some user engagement (a tap and about 30 seconds on the site) before `beforeinstallprompt` fires (S35). So the install screen shows the browser-menu steps until the event arrives, then switches to an **Install** button. Verified in Chromium: `Page.getInstallabilityErrors` returns none for the production build.
+- **iOS has no install API.** The only path is Share > Add to Home Screen, so the screen gives numbered steps with the matching Lucide icons.
+- **iOS home-screen apps do not share storage with Safari, by design** (S36, S37). Users sign in again inside the app, and the screen says so. Password recovery is completed in Safari, which is why `/reset-password` is exempt from the gate and linked from it.
+- The product owner asked for installation to be **required** on phones. Tablets and desktops are not gated, and a narrow desktop window is not a phone (coarse pointer required).
+

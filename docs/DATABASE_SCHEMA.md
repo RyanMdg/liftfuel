@@ -33,6 +33,10 @@ Postgres on Supabase. Migrations live in `supabase/migrations/`:
 | `weight_unit` | text | `kg` or `lb` (display only) |
 | `time_zone` | text | IANA name, validated by trigger (`now() at time zone`) |
 | `goal` | text | `lose`, `maintain` or `gain` |
+| `sex` | text | `male` or `female`, nullable. Target calculator input |
+| `birth_year` | smallint | 1900 to 2100, nullable. Calculator age (whole years, can be 1 high before the birthday) |
+| `height_cm` | numeric(4,1) | 100 to 250, nullable |
+| `activity_level` | text | `sedentary`, `light`, `moderate`, `very` or `extra`, nullable |
 | `onboarding_completed_at` | timestamptz | null until onboarding is done |
 | `created_at`, `updated_at` | timestamptz | |
 

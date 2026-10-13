@@ -22,8 +22,9 @@ export default defineConfig({
     command: `npx vite --port ${PORT} --strictPort`,
     port: PORT,
     reuseExistingServer: false,
+    // The phone install screen would hide the app from the mobile project; it has its own unit tests.
     env: hasSupabase
-      ? {}
-      : { VITE_SUPABASE_URL: 'http://127.0.0.1:9', VITE_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_placeholder' },
+      ? { VITE_INSTALL_GATE: 'off' }
+      : { VITE_SUPABASE_URL: 'http://127.0.0.1:9', VITE_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_placeholder', VITE_INSTALL_GATE: 'off' },
   },
 })

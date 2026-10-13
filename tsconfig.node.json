@@ -17,5 +17,5 @@
     "jsx": "react-jsx",
     "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["vite.config.ts", "vitest.config.ts", "playwright.config.ts", "tests", "eslint.config.js"]
+  "include": ["vite.config.ts", "vitest.config.ts", "playwright.config.ts", "tests", "eslint.config.js", "src/vite-env.d.ts"]
 }

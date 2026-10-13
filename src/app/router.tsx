@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate, type RouteObject } from 'react-router'
 import { AppShell } from '@/components/layout/AppShell'
 import { RedirectIfSignedIn, RequireAuth, RequireOnboarded } from '@/features/auth/guards'
 import { LoadingState } from '@/components/ui/States'
+import { InstallGate } from './InstallGate'
 import { RouteError, NotFoundPage } from './RouteError'
 
 type PageModule = { default: React.ComponentType }
@@ -11,6 +12,8 @@ const page = (load: () => Promise<PageModule>): Pick<RouteObject, 'lazy'> => ({
 
 export const routes: RouteObject[] = [
   {
+    // On phones outside the installed app, shows install steps instead (see InstallGate).
+    element: <InstallGate />,
     errorElement: <RouteError />,
     // Shown while the first lazily loaded route module downloads.
     hydrateFallbackElement: <main className="mx-auto max-w-md px-4 py-16"><LoadingState /></main>,

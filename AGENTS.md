@@ -102,6 +102,7 @@ Rounded corners (4px) are allowed on buttons, inputs, menus and dialogs only.
 - Training volume = Σ(load_kg × reps) over completed **working** sets. Warm-ups are excluded.
 - Exercise records (SQL view `exercise_records`): heaviest weight, best e1RM, best set volume (load × reps) and most reps. Warm-ups are excluded.
 - Exercise graphs (`exerciseSeries`): one value per workout (best e1RM, heaviest weight, session volume, total reps). Never zero-fill missing workouts.
+- Target calculator (`src/lib/energy.ts`): BMR = Mifflin-St Jeor `10 W + 6.25 H − 5 A + 5` (male) or `− 161` (female). TDEE = BMR × activity factor (1.2, 1.375, 1.55, 1.725 or 1.9). Calories = TDEE × (1 − 20%, 1, or 1 + 10%) by goal, never below BMR, rounded to 10. Protein g/kg by goal (2.0, 1.6, 1.8) capped at 35% of calories, fat 25%, carbohydrates the remainder. This is deterministic code, never a model call.
 - Weight trend = trailing 7-day mean of real weigh-ins, shown only with at least 3 weigh-ins in the window. Never interpolate.
 
 ## 7. Testing and verification
