@@ -1,0 +1,8 @@
+-- LiftFuel local seed (runs on `supabase db reset` for local development only).
+--
+-- Intentionally empty. The shared exercise library and generic food catalog are reference
+-- data, so they live in migration 20261014000400_reference_catalog.sql and reach hosted
+-- projects through `supabase db push`.
+--
+-- Never seed fake diary entries, workouts or weigh-ins: every number in the app must come
+-- from data the user actually recorded.

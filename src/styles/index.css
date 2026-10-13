@@ -1,0 +1,122 @@
+@import "tailwindcss";
+@import "@fontsource-variable/montserrat";
+
+/*
+ * LiftFuel design tokens. See docs/DESIGN_SYSTEM.md.
+ * The default Tailwind palette is removed on purpose: only brand tokens exist.
+ * Contrast ratios are against white unless stated.
+ */
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Brand */
+  --color-navy: #030027;        /* Deep Navy: 20.3:1 */
+  --color-white: #ffffff;
+  --color-teal: #0a575c;        /* Deep Teal: 8.3:1 */
+
+  /* Text derived from navy */
+  --color-ink: #030027;
+  --color-ink-soft: #4f4d68;    /* secondary text: 8.1:1 */
+  --color-ink-muted: #6b6a80;   /* metadata: 5.25:1 (AA); 4.9:1 on surface */
+
+  /* Lines and surfaces */
+  --color-line: #e3e2e9;        /* hairline separators (decorative) */
+  --color-line-strong: #8a899c; /* input and control borders: 3.4:1 (WCAG 1.4.11) */
+  --color-surface: #f6f6f8;     /* table header, hover row */
+
+  /* Teal scale for states and charts */
+  --color-teal-dark: #073f43;   /* primary hover */
+  --color-teal-soft: #edf4f4;   /* completed or selected row; ink-muted on it: 4.6:1 */
+  --color-teal-mid: #5d8f92;    /* secondary chart series: 3.6:1 */
+  --color-teal-light: #b6cecf;  /* chart reference fills */
+
+  /* Functional status (destructive and over-target only) */
+  --color-danger: #9f1d20;      /* 7.9:1 */
+  --color-danger-soft: #f8e9e9;
+  --color-danger-dark: #7c1619;
+
+  /* On-navy text */
+  --color-on-navy-muted: #b3b2be; /* 9.7:1 on navy */
+
+  --font-sans: "Montserrat Variable", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+
+  /* Functional elevation for overlays only (dialogs, menus, toasts). Never decorative. */
+  --shadow-overlay: 0 12px 32px -8px rgb(3 0 39 / 0.22);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+
+  /* Type scale (size / line-height) */
+  --text-display: 2.25rem;
+  --text-display--line-height: 2.5rem;
+  --text-display--letter-spacing: -0.02em;
+  --text-stat: 1.875rem;
+  --text-stat--line-height: 2.25rem;
+  --text-stat--letter-spacing: -0.01em;
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1rem;
+  --text-label--letter-spacing: 0.08em;
+}
+
+@layer base {
+  html {
+    color: var(--color-ink);
+    background: var(--color-white);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* WCAG 2.4.11: keep focused fields clear of the sticky mobile header */
+    scroll-padding-top: 4.5rem;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 2px;
+  }
+
+  [data-surface="navy"] :focus-visible {
+    outline-color: var(--color-white);
+  }
+
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+@utility label-caps {
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  letter-spacing: var(--text-label--letter-spacing);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
